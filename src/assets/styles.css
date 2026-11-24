@@ -475,17 +475,50 @@ a:hover {
 }
 
 .card-media {
+  position: relative;
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border-bottom: 1px solid var(--line);
   background: #eef0f7;
 }
 
-.card-media img {
+.card-media img,
+.card-media video {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top left;
+}
+
+.media-toggle {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  border-radius: 999px;
+  background: rgb(28 29 58 / 0.78);
+  color: #fff;
+  cursor: pointer;
+}
+
+.media-toggle:hover {
+  background: var(--primary);
+}
+
+.media-toggle:focus-visible {
+  outline: 3px solid #fff;
+  box-shadow: 0 0 0 6px var(--focus);
+}
+
+.media-toggle[data-state="playing"] .icon-play,
+.media-toggle[data-state="paused"] .icon-pause {
+  display: none;
 }
 
 .card-fallback {
@@ -588,6 +621,10 @@ a:hover {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
+}
+
+.card-foot a {
+  white-space: nowrap;
 }
 
 /* Releases */

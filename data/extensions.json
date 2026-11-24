@@ -6,7 +6,7 @@
   "categories": {
     "dashboard": { "en": "Dashboard", "fr": "Tableau de bord" },
     "lists": { "en": "Lists", "fr": "Listes" },
-    "look": { "en": "Appearance", "fr": "Apparence" },
+    "theme": { "en": "Theme", "fr": "Thème" },
     "email": { "en": "Email", "fr": "Emails" }
   },
   "extensions": [
@@ -16,7 +16,7 @@
       "repo": "espocrm-live-dashlets",
       "category": "dashboard",
       "espocrm": "10.0.3",
-      "screenshot": { "src": "live-dashlets.png", "width": 1440, "height": 648 },
+      "screenshot": { "src": "live-dashlets.png", "video": "live-dashlets.mp4", "width": 1440, "height": 648 },
       "en": {
         "tagline": "Key figures and goals that bring the dashboard to life, added in one click.",
         "points": [
@@ -40,9 +40,9 @@
       "slug": "lucid",
       "name": "Lucid",
       "repo": "espocrm-lucid-theme",
-      "category": "look",
+      "category": "theme",
       "espocrm": "10.0",
-      "screenshot": { "src": "lucid.png", "width": 1440, "height": 900 },
+      "screenshot": { "src": "lucid.png", "video": "lucid.mp4", "width": 1440, "height": 900 },
       "en": {
         "tagline": "Three light, readable themes: Lucid, Lucid Monochrome and Lucid Brut.",
         "points": [
@@ -68,7 +68,7 @@
       "repo": "espocrm-better-columns",
       "category": "lists",
       "espocrm": "10.0",
-      "screenshot": { "src": "better-columns.png", "animated": "better-columns.gif", "width": 1134, "height": 768 },
+      "screenshot": { "src": "better-columns.png", "video": "better-columns.mp4", "width": 1134, "height": 768 },
       "en": {
         "tagline": "Resize, auto-fit, reorder, pin and hide list view columns.",
         "points": [
@@ -76,7 +76,7 @@
           "Drag to reorder columns, pin or hide them",
           "Each user keeps their own layout"
         ],
-        "alt": "List view column resized with Better Columns"
+        "alt": "List view columns resized, reordered, pinned and hidden with Better Columns"
       },
       "fr": {
         "tagline": "Redimensionner, ajuster, déplacer, épingler et masquer les colonnes des listes.",
@@ -85,7 +85,34 @@
           "Glisser pour réordonner, épingler ou masquer une colonne",
           "Chaque utilisateur garde sa propre disposition"
         ],
-        "alt": "Colonne de liste redimensionnée avec Better Columns"
+        "alt": "Colonnes de liste redimensionnées, déplacées, épinglées et masquées avec Better Columns"
+      }
+    },
+    {
+      "slug": "inline-list-edit",
+      "name": "Inline List Edit",
+      "repo": "espocrm-inline-edit",
+      "category": "lists",
+      "espocrm": "9.3",
+      "screenshot": null,
+      "icon": "pencil",
+      "en": {
+        "tagline": "Edit fields directly in list views, without opening the record.",
+        "points": [
+          "Click a cell to edit it; links and native actions keep working",
+          "Honors access rights, read-only fields and dynamic logic",
+          "Editors sized to their content, one field at a time"
+        ],
+        "alt": ""
+      },
+      "fr": {
+        "tagline": "Modifier les champs directement dans les listes, sans ouvrir la fiche.",
+        "points": [
+          "Un clic dans une cellule pour la modifier ; liens et actions natives intacts",
+          "Respecte les droits d’accès, les champs en lecture seule et la logique dynamique",
+          "Éditeurs ajustés à leur contenu, un seul champ à la fois"
+        ],
+        "alt": ""
       }
     },
     {
@@ -121,6 +148,7 @@
       "category": "email",
       "espocrm": "10.0.3",
       "screenshot": null,
+      "icon": "mail",
       "en": {
         "tagline": "Write and send a mass email from a single view.",
         "points": [
