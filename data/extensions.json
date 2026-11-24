@@ -1,0 +1,144 @@
+{
+  "owner": "AlexisSantin",
+  "siteRepo": "espocrm-extensions",
+  "author": "Alexis Santin",
+  "php": "8.3",
+  "categories": {
+    "dashboard": { "en": "Dashboard", "fr": "Tableau de bord" },
+    "lists": { "en": "Lists", "fr": "Listes" },
+    "look": { "en": "Appearance", "fr": "Apparence" },
+    "email": { "en": "Email", "fr": "Emails" }
+  },
+  "extensions": [
+    {
+      "slug": "live-dashlets",
+      "name": "Live Dashlets",
+      "repo": "espocrm-live-dashlets",
+      "category": "dashboard",
+      "espocrm": "10.0.3",
+      "screenshot": { "src": "live-dashlets.png", "width": 1440, "height": 648 },
+      "en": {
+        "tagline": "Key figures and goals that bring the dashboard to life, added in one click.",
+        "points": [
+          "A gallery of 16 ready-made indicators, previewed with your own data",
+          "Change against the previous period, as a badge and a curve",
+          "Click a tile to list the records behind the figure"
+        ],
+        "alt": "EspoCRM dashboard with Live Dashlets tiles"
+      },
+      "fr": {
+        "tagline": "Des chiffres clés et des objectifs qui donnent vie au tableau de bord, ajoutés en un clic.",
+        "points": [
+          "Galerie de 16 indicateurs prêts à l’emploi, vos vrais chiffres en aperçu",
+          "Évolution par rapport à la période précédente, en badge et en courbe",
+          "Un clic sur une tuile liste les fiches derrière le chiffre"
+        ],
+        "alt": "Tableau de bord EspoCRM avec les tuiles Live Dashlets"
+      }
+    },
+    {
+      "slug": "lucid",
+      "name": "Lucid",
+      "repo": "espocrm-lucid-theme",
+      "category": "look",
+      "espocrm": "10.0",
+      "screenshot": { "src": "lucid.png", "width": 1440, "height": 900 },
+      "en": {
+        "tagline": "Three light, readable themes: Lucid, Lucid Monochrome and Lucid Brut.",
+        "points": [
+          "Two-column record view with an owner and pipeline stage band",
+          "Collapsible blocks, adjustable columns, dark mode",
+          "Designed for WCAG 2.1 AA and RGAA accessibility"
+        ],
+        "alt": "Lead record with the Lucid theme"
+      },
+      "fr": {
+        "tagline": "Trois thèmes clairs et lisibles : Lucid, Lucid Monochrome et Lucid Brut.",
+        "points": [
+          "Fiche en deux colonnes avec bandeau du propriétaire et des étapes",
+          "Blocs repliables, colonnes ajustables, mode sombre",
+          "Conçu pour l’accessibilité WCAG 2.1 AA et RGAA"
+        ],
+        "alt": "Fiche prospect avec le thème Lucid"
+      }
+    },
+    {
+      "slug": "better-columns",
+      "name": "Better Columns",
+      "repo": "espocrm-better-columns",
+      "category": "lists",
+      "espocrm": "10.0",
+      "screenshot": { "src": "better-columns.png", "animated": "better-columns.gif", "width": 1134, "height": 768 },
+      "en": {
+        "tagline": "Resize, auto-fit, reorder, pin and hide list view columns.",
+        "points": [
+          "Double-click a column edge to fit it to its content",
+          "Drag to reorder columns, pin or hide them",
+          "Each user keeps their own layout"
+        ],
+        "alt": "List view column resized with Better Columns"
+      },
+      "fr": {
+        "tagline": "Redimensionner, ajuster, déplacer, épingler et masquer les colonnes des listes.",
+        "points": [
+          "Double-clic sur un bord pour ajuster la colonne à son contenu",
+          "Glisser pour réordonner, épingler ou masquer une colonne",
+          "Chaque utilisateur garde sa propre disposition"
+        ],
+        "alt": "Colonne de liste redimensionnée avec Better Columns"
+      }
+    },
+    {
+      "slug": "smart-filter",
+      "name": "Smart Filter",
+      "repo": "espocrm-smart-filter",
+      "category": "lists",
+      "espocrm": "10.0.3",
+      "screenshot": { "src": "smart-filter.png", "width": 1243, "height": 578 },
+      "en": {
+        "tagline": "A faster filter bar that shows what is actually filtered.",
+        "points": [
+          "Active filter counter on the filter button",
+          "Accent-insensitive field search, frequent fields first",
+          "Filters apply immediately, with no Apply button"
+        ],
+        "alt": "Filter menu kept open with Smart Filter"
+      },
+      "fr": {
+        "tagline": "Une barre de filtres plus rapide, qui montre ce qui est vraiment filtré.",
+        "points": [
+          "Compteur de filtres actifs sur le bouton",
+          "Recherche de champ sans accents, champs fréquents en tête",
+          "Application immédiate, sans bouton Appliquer"
+        ],
+        "alt": "Menu de filtres resté ouvert avec Smart Filter"
+      }
+    },
+    {
+      "slug": "simple-mass-email",
+      "name": "Simple Mass Email",
+      "repo": "espocrm-simple-mass-email",
+      "category": "email",
+      "espocrm": "10.0.3",
+      "screenshot": null,
+      "en": {
+        "tagline": "Write and send a mass email from a single view.",
+        "points": [
+          "Send now, or schedule for later",
+          "Send from a personal account, within a 24-hour limit",
+          "Shared templates are never modified"
+        ],
+        "alt": ""
+      },
+      "fr": {
+        "tagline": "Rédiger et envoyer un email groupé depuis une seule vue.",
+        "points": [
+          "Envoyer maintenant, ou planifier à une date",
+          "Envoi par un compte personnel, avec limite sur 24 h",
+          "Un modèle partagé n’est jamais modifié"
+        ],
+        "alt": ""
+      }
+    }
+  ]
+}

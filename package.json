@@ -1,0 +1,14 @@
+{
+  "name": "espocrm-extensions-site",
+  "private": true,
+  "description": "Public catalogue of Alexis Santin's EspoCRM extensions, built from their GitHub releases.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "preview": "python3 -m http.server 4173 --directory dist"
+  }
+}

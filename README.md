@@ -1,0 +1,64 @@
+# EspoCRM extensions — public site
+
+Catalogue of Alexis Santin's EspoCRM extensions, in English (`/`) and French
+(`/fr/`). Each card shows the latest version, its date, a direct download link
+to the release ZIP and a link to the documentation.
+
+Versions, dates, ZIP links and the "Recent releases" list are read from each
+extension's GitHub releases at build time: publishing a release is enough, the
+site picks it up at the next build (every morning, or on demand).
+
+## Layout
+
+| Path | Content |
+| --- | --- |
+| `data/extensions.json` | The extensions: repository, category, minimum EspoCRM version, screenshot, and texts in English and French |
+| `src/strings.mjs` | Interface texts, in English and French |
+| `src/assets/` | Stylesheet, filter script, favicon, self-hosted Lexend font, screenshots |
+| `scripts/build.mjs` | Generates `dist/` (no dependencies, Node 20+) |
+| `.github/workflows/deploy.yml` | Builds and deploys to GitHub Pages on push, every day at 05:17 UTC and on demand |
+
+## Add or change an extension
+
+1. Add an entry to `data/extensions.json` (`repo` is the repository name under
+   the owner, `category` one of the keys of `categories`, `espocrm` the
+   minimum version shown on the card).
+2. Put its screenshot in `src/assets/screenshots/` and fill `screenshot` with
+   its file name, width and height. `animated` can name a GIF shown instead,
+   except to visitors who ask their system for reduced motion. Without a
+   screenshot (`null`), the card shows an icon.
+3. The repository must be public and have at least one published release with
+   a `.zip` asset.
+
+## Build locally
+
+```sh
+npm run build      # writes dist/
+npm run preview    # serves dist/ on http://localhost:4173
+```
+
+`GITHUB_TOKEN` (optional) raises the GitHub API rate limit. `SITE_URL`
+(optional, set by the workflow) adds the canonical and language links, the
+Open Graph image, `sitemap.xml` and `robots.txt`.
+
+## Deployment
+
+In the repository settings, Pages → Build and deployment → Source: **GitHub
+Actions**. The workflow does the rest. If a build fails (for example GitHub's
+API is down), nothing is deployed and the previous version stays online.
+
+GitHub disables scheduled workflows after 60 days without activity in the
+repository: re-enable it from the Actions tab, or run it by hand after a
+release.
+
+## Licenses
+
+- The code of this site is released under the MIT license (`LICENSE`), like
+  EspoCRM's own build tools.
+- The Lexend font is distributed under the SIL Open Font License
+  (`src/assets/fonts/OFL-Lexend.txt`).
+- Each extension keeps its own license, shown on its card as GitHub detects it
+  in the extension's repository. Once every extension has the same license, the
+  list says so in one sentence.
+- EspoCRM® is a registered trademark of EspoCRM, Inc. The footer says so and
+  that the extensions are not affiliated with EspoCRM, Inc.
