@@ -1,5 +1,5 @@
 // Builds the static site into dist/: one page per language, with versions,
-// dates and download links read from each extension's GitHub releases.
+// dates and download links read from each extension's latest GitHub release.
 //
 //   GITHUB_TOKEN  optional, raises the GitHub API rate limit
 //   SITE_URL      optional, absolute URL of the site (canonical, hreflang,
@@ -16,7 +16,6 @@ const data = JSON.parse(await readFile(path.join(root, 'data/extensions.json'), 
 const siteUrl = process.env.SITE_URL ? process.env.SITE_URL.replace(/\/*$/, '/') : '';
 const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
 const RECENT_RELEASES = 6;
-const RELEASES_PER_EXTENSION = 2;
 
 async function github(pathname, { notFound } = {}) {
   const response = await fetch(`https://api.github.com${pathname}`, {
@@ -36,24 +35,23 @@ async function github(pathname, { notFound } = {}) {
   return response.json();
 }
 
-async function loadReleases(extension) {
-  const list = await github(`/repos/${data.owner}/${extension.repo}/releases?per_page=30`);
-  const published = list
-    .filter((release) => !release.draft && !release.prerelease && release.published_at)
-    .sort((a, b) => b.published_at.localeCompare(a.published_at));
-  if (!published.length) {
-    throw new Error(`${extension.repo} has no published release`);
+const repoUrl = (extension) => `https://github.com/${data.owner}/${extension.repo}`;
+
+// The release GitHub shows at /releases/latest, so that the version on the
+// card matches the page the "What's new" link opens. Null when the repository
+// is private or has no published release yet.
+async function loadLatest(extension) {
+  const release = await github(`/repos/${data.owner}/${extension.repo}/releases/latest`, { notFound: null });
+  if (!release) {
+    return null;
   }
-  return published.map((release) => {
-    const zip = release.assets.find((asset) => asset.name.endsWith('.zip'));
-    return {
-      version: release.tag_name.replace(/^v/, ''),
-      date: release.published_at,
-      notesUrl: release.html_url,
-      zipUrl: zip ? zip.browser_download_url : release.html_url,
-      zipSize: zip ? zip.size : null,
-    };
-  });
+  const zip = release.assets.find((asset) => asset.name.endsWith('.zip'));
+  return {
+    version: release.tag_name.replace(/^v/, ''),
+    date: release.published_at,
+    zipUrl: zip ? zip.browser_download_url : `${repoUrl(extension)}/releases/latest`,
+    zipSize: zip ? zip.size : null,
+  };
 }
 
 // The license GitHub detects on the default branch; none when it has no
@@ -67,46 +65,59 @@ async function loadLicense(extension) {
   return { spdx, url: found.html_url };
 }
 
-const escapeMap ={ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const escapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 const esc = (value) => String(value).replace(/[&<>"']/g, (c) => escapeMap[c]);
 
+const svg = (size, body, width = 1.6) =>
+  `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${body}</svg>`;
+
 const icons = {
-  check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
-  download: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="M7 10.5l5 5 5-5"/><path d="M5 20h14"/></svg>',
-  mail: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
+  check: svg(16, '<path d="M5 12.5l4.5 4.5L19 7.5"/>', 2.4),
+  download: svg(16, '<path d="M12 4v11"/><path d="M7 10.5l5 5 5-5"/><path d="M5 20h14"/>', 2),
+  mail: svg(40, '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'),
+  pencil: svg(40, '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/>'),
+  play: '<svg class="icon-play" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>',
+  pause: '<svg class="icon-pause" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6.5" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="13.5" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>',
 };
 
-function versionKey(version) {
-  return version.split('.').map((part) => part.padStart(4, '0')).join('.');
+const versionKey = (version) => version.split('.').map((part) => part.padStart(4, '0')).join('.');
+
+function renderMedia(extension, t, base) {
+  const shot = extension.screenshot;
+  const text = extension[t.htmlLang];
+  if (!shot) {
+    return `<div class="card-fallback"><span>${icons[extension.icon || 'mail']}</span></div>`;
+  }
+  const still = `${base}assets/screenshots/${shot.src}`;
+  if (!shot.video) {
+    return `<img src="${esc(still)}" alt="${esc(text.alt)}" width="${shot.width}" height="${shot.height}" loading="lazy" decoding="async">`;
+  }
+  // Without JavaScript, or when the visitor asks for reduced motion, the
+  // poster stays; the script plays the loop while the card is on screen.
+  return `<video muted loop playsinline preload="none" poster="${esc(still)}" aria-label="${esc(text.alt)}" data-card-video>
+              <source src="${esc(`${base}assets/screenshots/${shot.video}`)}" type="video/mp4">
+            </video>
+            <button type="button" class="media-toggle" data-media-toggle data-state="paused" data-label-play="${esc(t.extensions.play)}" data-label-pause="${esc(t.extensions.pause)}" aria-label="${esc(t.extensions.play)}" hidden>${icons.play}${icons.pause}</button>`;
 }
 
 function renderCard(extension, locale, t, base) {
   const text = extension[locale];
-  const latest = extension.releases[0];
+  const latest = extension.latest;
   const dateFormat = new Intl.DateTimeFormat(t.dateLocale, { day: 'numeric', month: 'short', year: 'numeric' });
   const sizeFormat = new Intl.NumberFormat(t.dateLocale, { style: 'unit', unit: 'kilobyte', maximumFractionDigits: 0 });
-  const shot = extension.screenshot;
-  let media;
-  if (shot) {
-    const src = `${base}assets/screenshots/${shot.src}`;
-    const img = `<img src="${esc(src)}" alt="${esc(text.alt)}" width="${shot.width}" height="${shot.height}" loading="lazy" decoding="async">`;
-    media = shot.animated
-      ? `<picture><source srcset="${esc(`${base}assets/screenshots/${shot.animated}`)}" media="(prefers-reduced-motion: no-preference)">${img}</picture>`
-      : img;
-  } else {
-    media = `<div class="card-fallback"><span>${icons.mail}</span></div>`;
-  }
   const footParts = [
     latest.zipSize ? `${t.extensions.zip} · ${sizeFormat.format(Math.round(latest.zipSize / 1000))}` : t.extensions.zip,
     `EspoCRM ${esc(extension.espocrm)}+`,
     ...(extension.license
       ? [`<a href="${esc(extension.license.url)}">${esc(t.extensions.license(extension.license.spdx))}<span class="visually-hidden">, ${esc(extension.name)}</span></a>`]
       : []),
-    `<a href="${esc(latest.notesUrl)}">${t.extensions.whatsNew}<span class="visually-hidden">, ${esc(extension.name)} ${esc(latest.version)}</span></a>`,
+    `<a href="${esc(`${repoUrl(extension)}/releases/latest`)}">${t.extensions.whatsNew}<span class="visually-hidden">, ${esc(extension.name)}</span></a>`,
   ];
   return `
         <li class="card" id="${esc(extension.slug)}" data-category="${esc(extension.category)}">
-          <div class="card-media">${media}</div>
+          <div class="card-media">
+            ${renderMedia(extension, t, base)}
+          </div>
           <div class="card-body">
             <div class="card-meta">
               <span class="tag">${esc(data.categories[extension.category][locale])}</span>
@@ -119,7 +130,7 @@ function renderCard(extension, locale, t, base) {
             </ul>
             <div class="card-actions">
               <a class="btn btn-primary" href="${esc(latest.zipUrl)}">${icons.download}${t.extensions.download} v${esc(latest.version)}<span class="visually-hidden">, ${esc(extension.name)}</span></a>
-              <a class="btn btn-secondary" href="https://github.com/${esc(data.owner)}/${esc(extension.repo)}#readme">${t.extensions.docs}<span class="visually-hidden">, ${esc(extension.name)}</span></a>
+              <a class="btn btn-secondary" href="${esc(`${repoUrl(extension)}#readme`)}">${t.extensions.docs}<span class="visually-hidden">, ${esc(extension.name)}</span></a>
             </div>
             <p class="card-foot">${footParts.join(' · ')}</p>
           </div>
@@ -133,17 +144,14 @@ function renderPage(locale, extensions, assetVersion) {
   const dateFormat = new Intl.DateTimeFormat(t.dateLocale, { day: 'numeric', month: 'short', year: 'numeric' });
   const monthFormat = new Intl.DateTimeFormat(t.dateLocale, { month: 'short', year: 'numeric' });
 
-  const minEspo = extensions.map((e) => e.espocrm).sort((a, b) => versionKey(a).localeCompare(versionKey(b)))[0];
-  const minMajor = minEspo.split('.')[0];
-  const allReleases = extensions
-    .flatMap((extension) => extension.releases.map((release) => ({ ...release, extension })))
-    .sort((a, b) => b.date.localeCompare(a.date));
-  const latestDate = new Date(allReleases[0].date);
+  // The version from which every extension works: the highest minimum.
+  const allFrom = extensions.map((e) => e.espocrm).sort((a, b) => versionKey(b).localeCompare(versionKey(a)))[0];
+  const byDate = [...extensions].sort((a, b) => b.latest.date.localeCompare(a.latest.date));
 
   // One sentence about the license once every extension shares the same one.
   const licenses = new Set(extensions.map((e) => (e.license ? e.license.spdx : null)));
   const sharedLicense = licenses.size === 1 && !licenses.has(null) ? [...licenses][0] : null;
-  const extensionsLead = t.extensions.lead(minEspo) + (sharedLicense ? ` ${t.extensions.allLicensed(sharedLicense)}` : '');
+  const extensionsLead = t.extensions.lead(allFrom) + (sharedLicense ? ` ${t.extensions.allLicensed(sharedLicense)}` : '');
 
   const categories = Object.keys(data.categories).filter((key) => extensions.some((e) => e.category === key));
   const chips = [
@@ -179,22 +187,15 @@ function renderPage(locale, extensions, assetVersion) {
     `<link rel="icon" href="${base}assets/favicon.svg" type="image/svg+xml">`,
     `<link rel="preload" href="${base}assets/fonts/lexend-latin-wght.woff2" as="font" type="font/woff2" crossorigin>`,
     `<link rel="stylesheet" href="${base}assets/styles.css?v=${assetVersion}">`,
-    `<script src="${base}assets/filter.js?v=${assetVersion}" defer></script>`,
+    `<script src="${base}assets/site.js?v=${assetVersion}" defer></script>`,
   );
 
-  // At most RELEASES_PER_EXTENSION per extension, so one busy week on a
-  // single extension does not hide the others.
-  const perExtension = new Map();
-  const recent = allReleases.filter((release) => {
-    const count = perExtension.get(release.extension.slug) || 0;
-    perExtension.set(release.extension.slug, count + 1);
-    return count < RELEASES_PER_EXTENSION;
-  });
-  const releases = recent.slice(0, RECENT_RELEASES).map((release) => `
+  // The latest version of each extension, newest first.
+  const releases = byDate.slice(0, RECENT_RELEASES).map((extension) => `
           <li class="release">
-            <time datetime="${esc(release.date)}">${esc(dateFormat.format(new Date(release.date)))}</time>
-            <span class="release-name"><a href="#${esc(release.extension.slug)}">${esc(release.extension.name)}</a><span class="release-version">${esc(release.version)}</span></span>
-            <a class="release-notes" href="${esc(release.notesUrl)}">${t.releases.notes}<span class="visually-hidden">, ${esc(release.extension.name)} ${esc(release.version)}</span></a>
+            <time datetime="${esc(extension.latest.date)}">${esc(dateFormat.format(new Date(extension.latest.date)))}</time>
+            <span class="release-name"><a href="#${esc(extension.slug)}">${esc(extension.name)}</a><span class="release-version">${esc(extension.latest.version)}</span></span>
+            <a class="release-notes" href="${esc(`${repoUrl(extension)}/releases/latest`)}">${t.releases.notes}<span class="visually-hidden">, ${esc(extension.name)}</span></a>
           </li>`).join('');
 
   const steps = t.install.steps.map(([title, text], index) => `
@@ -236,8 +237,8 @@ ${head.join('\n')}
       </div>
       <dl class="facts">
         <div><dt>${esc(t.hero.count)}</dt><dd>${extensions.length}</dd></div>
-        <div><dt>${esc(t.hero.supported)}</dt><dd>EspoCRM ${esc(minMajor)}+</dd></div>
-        <div><dt>${esc(t.hero.latest)}</dt><dd><time datetime="${esc(allReleases[0].date)}">${esc(monthFormat.format(latestDate))}</time></dd></div>
+        <div><dt>${esc(t.hero.supported)}</dt><dd>EspoCRM ${esc(allFrom.split('.')[0])}+</dd></div>
+        <div><dt>${esc(t.hero.latest)}</dt><dd><time datetime="${esc(byDate[0].latest.date)}">${esc(monthFormat.format(new Date(byDate[0].latest.date)))}</time></dd></div>
       </dl>
     </div>
     <div class="hero-visual">
@@ -274,7 +275,7 @@ ${head.join('\n')}
   <section id="install" class="band" aria-labelledby="install-title">
     <div class="container">
       <h2 id="install-title">${esc(t.install.title)}</h2>
-      <p class="section-lead">${esc(t.install.lead(minEspo, data.php))}</p>
+      <p class="section-lead">${esc(t.install.lead(data.php))}</p>
       <ol class="steps">${steps}
       </ol>
       <p class="install-help">${esc(t.install.help)}</p>
@@ -303,17 +304,21 @@ ${head.join('\n')}
 
 const extensions = [];
 for (const extension of data.extensions) {
-  extensions.push({
-    ...extension,
-    releases: await loadReleases(extension),
-    license: await loadLicense(extension),
-  });
+  const latest = await loadLatest(extension);
+  if (!latest) {
+    console.warn(`Skipped ${extension.name}: ${extension.repo} is private or has no published release.`);
+    continue;
+  }
+  extensions.push({ ...extension, latest, license: await loadLicense(extension) });
+}
+if (!extensions.length) {
+  throw new Error('No extension could be read from GitHub.');
 }
 
 const assetsDir = path.join(root, 'src/assets');
 const assetVersion = createHash('sha256')
   .update(await readFile(path.join(assetsDir, 'styles.css')))
-  .update(await readFile(path.join(assetsDir, 'filter.js')))
+  .update(await readFile(path.join(assetsDir, 'site.js')))
   .digest('hex')
   .slice(0, 10);
 
@@ -324,7 +329,7 @@ await writeFile(path.join(dist, 'index.html'), renderPage('en', extensions, asse
 await writeFile(path.join(dist, 'fr/index.html'), renderPage('fr', extensions, assetVersion));
 
 if (siteUrl) {
-  const lastmod = extensions.flatMap((e) => e.releases.map((r) => r.date)).sort().pop().slice(0, 10);
+  const lastmod = extensions.map((e) => e.latest.date).sort().pop().slice(0, 10);
   const urls = [siteUrl, `${siteUrl}fr/`]
     .map((loc) => `  <url><loc>${esc(loc)}</loc><lastmod>${lastmod}</lastmod></url>`)
     .join('\n');
@@ -333,6 +338,6 @@ if (siteUrl) {
 }
 
 for (const extension of extensions) {
-  console.log(`${extension.name.padEnd(20)} ${extension.releases[0].version.padEnd(8)} ${extension.releases[0].date.slice(0, 10)}  ${extension.license ? extension.license.spdx : 'no license detected'}`);
+  console.log(`${extension.name.padEnd(20)} ${extension.latest.version.padEnd(8)} ${extension.latest.date.slice(0, 10)}  ${extension.license ? extension.license.spdx : 'no license detected'}`);
 }
 console.log(`Built ${path.relative(root, dist)}/ (en, fr)${siteUrl ? ` for ${siteUrl}` : ''}`);

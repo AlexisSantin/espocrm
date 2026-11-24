@@ -38,6 +38,8 @@ export const strings = {
       docs: 'Documentation',
       whatsNew: 'What’s new',
       zip: 'ZIP',
+      play: 'Play the animation',
+      pause: 'Pause the animation',
       license: (spdx) => `${spdx} license`,
       allLicensed: (spdx) => `They are free software, under the ${spdx} license like EspoCRM itself.`,
     },
@@ -48,7 +50,7 @@ export const strings = {
     },
     install: {
       title: 'Install an extension',
-      lead: (espocrm, php) => `Requires EspoCRM ${espocrm} or later and PHP ${php} or later.`,
+      lead: (php) => `Each card gives the EspoCRM version the extension needs. All of them need PHP ${php} or later.`,
       steps: [
         ['Download the ZIP', 'Use the Download button of the extension. Each one links to its latest version.'],
         ['Upload it to EspoCRM', 'Go to Administration → Extensions, choose the ZIP file, click Upload, then Install.'],
@@ -102,6 +104,8 @@ export const strings = {
       docs: 'Documentation',
       whatsNew: 'Nouveautés',
       zip: 'ZIP',
+      play: 'Lancer l’animation',
+      pause: 'Mettre l’animation en pause',
       license: (spdx) => `Licence ${spdx}`,
       allLicensed: (spdx) => `Ce sont des logiciels libres, sous licence ${spdx} comme EspoCRM.`,
     },
@@ -112,7 +116,7 @@ export const strings = {
     },
     install: {
       title: 'Installer une extension',
-      lead: (espocrm, php) => `Nécessite EspoCRM ${espocrm} ou plus et PHP ${php} ou plus.`,
+      lead: (php) => `Chaque fiche indique la version d’EspoCRM nécessaire. Toutes demandent PHP ${php} ou plus.`,
       steps: [
         ['Télécharger le ZIP', 'Avec le bouton Télécharger de l’extension, qui pointe toujours vers sa dernière version.'],
         ['L’envoyer dans EspoCRM', 'Administration → Extensions : choisir le fichier ZIP, cliquer sur Mettre en ligne, puis sur Installer.'],

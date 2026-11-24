@@ -5,9 +5,10 @@ on:
     branches: [main]
   # Pull requests are built (to catch broken data or templates) but not deployed.
   pull_request:
-  # Picks up new extension releases every morning.
+  # Every hour: picks up new extension releases, and deploys only when the
+  # generated pages changed.
   schedule:
-    - cron: "17 5 * * *"
+    - cron: "17 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -22,6 +23,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.compare.outputs.changed }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -34,12 +37,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SITE_URL: ${{ steps.pages.outputs.base_url }}
+      - name: Compare with the deployed site
+        id: compare
+        env:
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          changed=false
+          for page in "" "fr/"; do
+            if ! curl -sf "${SITE_URL%/}/${page}" -o deployed.html || ! cmp -s deployed.html "dist/${page}index.html"; then
+              changed=true
+            fi
+          done
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+          echo "Pages changed since the last deployment: $changed"
       - uses: actions/upload-pages-artifact@v5
+        if: github.event_name != 'schedule' || steps.compare.outputs.changed == 'true'
         with:
           path: dist
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && (github.event_name != 'schedule' || needs.build.outputs.changed == 'true')
     needs: build
     runs-on: ubuntu-latest
     environment:
