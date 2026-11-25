@@ -214,7 +214,7 @@ ${head.join('\n')}
 <a class="skip-link" href="#main">${esc(t.skip)}</a>
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">AS</span>${esc(data.author)}</a>
+    <a class="brand" href="${t.homeHref}"><span class="brand-mark" aria-hidden="true">AS</span>${esc(data.author)}</a>
     <nav class="site-nav" aria-label="${esc(t.nav.label)}">
       <a href="#extensions">${esc(t.nav.extensions)}</a>
       <a href="#releases">${esc(t.nav.releases)}</a>

@@ -15,6 +15,7 @@ export const strings = {
       install: 'Install',
     },
     switchTo: { href: 'fr/', label: 'Français', lang: 'fr' },
+    homeHref: 'https://alexissantin.github.io/en/',
     hero: {
       eyebrow: 'EspoCRM extensions',
       title: 'Extensions that make EspoCRM nicer to use every day.',
@@ -81,6 +82,7 @@ export const strings = {
       install: 'Installer',
     },
     switchTo: { href: '../', label: 'English', lang: 'en' },
+    homeHref: 'https://alexissantin.github.io/',
     hero: {
       eyebrow: 'Extensions pour EspoCRM',
       title: 'Des extensions qui rendent EspoCRM plus agréable au quotidien.',
