@@ -189,6 +189,9 @@ function renderPage(locale, extensions, assetVersion) {
     `<link rel="preload" href="${base}assets/fonts/inter-latin-wght.woff2" as="font" type="font/woff2" crossorigin>`,
     `<link rel="stylesheet" href="${base}assets/styles.css?v=${assetVersion}">`,
     `<script src="${base}assets/site.js?v=${assetVersion}" defer></script>`,
+    // Chrome and Edge prerender a page of the domain when its link is hovered,
+    // as on the homepage.
+    '<script type="speculationrules">{"prerender":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/unsubscribe.html"}}]},"eagerness":"moderate"}]}</script>',
   );
 
   // The latest version of each extension, newest first.
@@ -217,12 +220,13 @@ ${head.join('\n')}
   <div class="container">
     <a class="brand" href="${t.homeHref}"><span class="brand-mark" aria-hidden="true">AS</span>${esc(data.author)}</a>
     <nav class="site-nav" aria-label="${esc(t.nav.label)}">
-      <a class="nav-secondary" href="${t.nav.workHref}">${esc(t.nav.work)}</a>
-      <a class="nav-secondary" href="./" aria-current="page">${esc(t.nav.catalogue)}</a>
-      <a class="nav-secondary" href="${t.nav.aboutHref}">${esc(t.nav.about)}</a>
+      <a href="${t.nav.servicesHref}">${esc(t.nav.services)}</a>
+      <a href="${t.nav.workHref}">${esc(t.nav.work)}</a>
+      <a href="./" aria-current="page">${t.nav.catalogue}</a>
+      <a href="${t.nav.aboutHref}">${esc(t.nav.about)}</a>
       <a class="nav-lang" href="${t.switchTo.href}" hreflang="${t.switchTo.lang}" lang="${t.switchTo.lang}" aria-label="${esc(t.switchTo.label)}">${esc(t.switchTo.code)}</a>
-      <a class="btn btn-dark btn-sm" href="https://cal.com/alexissantin/15min">${esc(t.nav.book)}</a>
     </nav>
+    <a class="btn btn-dark btn-sm header-cta" href="https://cal.com/alexissantin/15min">${esc(t.nav.book)}</a>
   </div>
 </header>
 
