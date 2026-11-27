@@ -685,6 +685,30 @@ dl {
   white-space: nowrap;
 }
 
+/* Custom work call to action */
+
+.custom-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px 48px;
+  padding: 40px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--accent-tint);
+}
+
+.custom-card .section-intro {
+  flex: 1 1 560px;
+}
+
+@media (max-width: 560px) {
+  .custom-card {
+    padding: 24px;
+  }
+}
+
 /* Releases */
 
 .releases {
