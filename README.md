@@ -15,7 +15,7 @@ an hourly check rebuilds the site and deploys it when a page changed. The
 | --- | --- |
 | `data/extensions.json` | The extensions: repository, category, minimum EspoCRM version, screenshot, and texts in English and French |
 | `src/strings.mjs` | Interface texts, in English and French |
-| `src/assets/` | Stylesheet, script (filter and card animations), favicon, self-hosted Lexend font, screenshots and videos |
+| `src/assets/` | Stylesheet, script (filter and card animations), favicon, self-hosted Manrope and Inter fonts, screenshots and videos |
 | `scripts/build.mjs` | Generates `dist/` (no dependencies, Node 20+) |
 | `.github/workflows/deploy.yml` | Deploys to GitHub Pages on push and on demand; every hour, deploys only if the pages changed; builds pull requests without deploying them |
 
@@ -65,8 +65,10 @@ release.
 
 - The code of this site is released under the MIT license (`LICENSE`), like
   EspoCRM's own build tools.
-- The Lexend font is distributed under the SIL Open Font License
-  (`src/assets/fonts/OFL-Lexend.txt`).
+- The Manrope and Inter fonts are distributed under the SIL Open Font License
+  (`src/assets/fonts/OFL-Manrope.txt`, `OFL-Inter.txt`).
+- The design (colours, fonts, header, buttons, footer) matches the homepage at
+  https://alexissantin.github.io/: change both together.
 - Each extension keeps its own license, shown on its card as GitHub detects it
   in the extension's repository. Once every extension has the same license, the
   list says so in one sentence.

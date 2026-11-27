@@ -185,7 +185,8 @@ function renderPage(locale, extensions, assetVersion) {
   }
   head.push(
     `<link rel="icon" href="${base}assets/favicon.svg" type="image/svg+xml">`,
-    `<link rel="preload" href="${base}assets/fonts/lexend-latin-wght.woff2" as="font" type="font/woff2" crossorigin>`,
+    `<link rel="preload" href="${base}assets/fonts/manrope-latin-wght.woff2" as="font" type="font/woff2" crossorigin>`,
+    `<link rel="preload" href="${base}assets/fonts/inter-latin-wght.woff2" as="font" type="font/woff2" crossorigin>`,
     `<link rel="stylesheet" href="${base}assets/styles.css?v=${assetVersion}">`,
     `<script src="${base}assets/site.js?v=${assetVersion}" defer></script>`,
   );
@@ -213,27 +214,27 @@ ${head.join('\n')}
 <body>
 <a class="skip-link" href="#main">${esc(t.skip)}</a>
 <header class="site-header">
-  <div class="container header-inner">
+  <div class="container">
     <a class="brand" href="${t.homeHref}"><span class="brand-mark" aria-hidden="true">AS</span>${esc(data.author)}</a>
     <nav class="site-nav" aria-label="${esc(t.nav.label)}">
-      <a href="#extensions">${esc(t.nav.extensions)}</a>
-      <a href="#releases">${esc(t.nav.releases)}</a>
-      <a href="#install">${esc(t.nav.install)}</a>
-      <a class="nav-github" href="https://github.com/${esc(data.owner)}">GitHub</a>
-      <a class="lang-switch" href="${t.switchTo.href}" hreflang="${t.switchTo.lang}" lang="${t.switchTo.lang}">${esc(t.switchTo.label)}</a>
+      <a class="nav-secondary" href="${t.nav.workHref}">${esc(t.nav.work)}</a>
+      <a class="nav-secondary" href="./" aria-current="page">${esc(t.nav.catalogue)}</a>
+      <a class="nav-secondary" href="${t.nav.aboutHref}">${esc(t.nav.about)}</a>
+      <a class="nav-lang" href="${t.switchTo.href}" hreflang="${t.switchTo.lang}" lang="${t.switchTo.lang}" aria-label="${esc(t.switchTo.label)}">${esc(t.switchTo.code)}</a>
+      <a class="btn btn-dark btn-sm" href="https://cal.com/alexissantin/15min">${esc(t.nav.book)}</a>
     </nav>
   </div>
 </header>
 
 <main id="main">
   <section class="container hero">
-    <div class="hero-text">
+    <div class="hero-main">
       <p class="eyebrow">${esc(t.hero.eyebrow)}</p>
       <h1>${esc(t.hero.title)}</h1>
-      <p class="hero-lead">${esc(t.hero.lead)}</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href="#extensions">${esc(t.hero.cta)}</a>
-        <a class="btn btn-secondary btn-lg" href="https://github.com/${esc(data.owner)}">${esc(t.hero.github)}</a>
+      <p class="lead">${esc(t.hero.lead)}</p>
+      <div class="actions">
+        <a class="btn btn-accent" href="#extensions">${esc(t.hero.cta)}</a>
+        <a class="btn btn-outline" href="#install">${esc(t.hero.install)}</a>
       </div>
       <dl class="facts">
         <div><dt>${esc(t.hero.count)}</dt><dd>${extensions.length}</dd></div>
@@ -248,9 +249,10 @@ ${head.join('\n')}
   </section>
 
   <section id="extensions" class="container section" aria-labelledby="extensions-title">
-    <div class="section-head">
-      <div>
-        <h2 id="extensions-title">${esc(t.extensions.title)}</h2>
+    <div class="section-head section-head-split">
+      <div class="section-intro">
+        <p class="kicker">${esc(t.extensions.kicker)}</p>
+        <h2 id="extensions-title" class="section-title">${esc(t.extensions.title)}</h2>
         <p class="section-lead">${esc(extensionsLead)}</p>
       </div>
       <div class="filters" data-filters hidden>
@@ -266,16 +268,22 @@ ${head.join('\n')}
   </section>
 
   <section id="releases" class="container section" aria-labelledby="releases-title">
-    <h2 id="releases-title">${esc(t.releases.title)}</h2>
-    <p class="section-lead">${esc(t.releases.lead)}</p>
+    <div class="section-head">
+      <p class="kicker">${esc(t.releases.kicker)}</p>
+      <h2 id="releases-title" class="section-title">${esc(t.releases.title)}</h2>
+      <p class="section-lead">${esc(t.releases.lead)}</p>
+    </div>
     <ol class="releases">${releases}
     </ol>
   </section>
 
-  <section id="install" class="band" aria-labelledby="install-title">
+  <section id="install" class="install-band" aria-labelledby="install-title">
     <div class="container">
-      <h2 id="install-title">${esc(t.install.title)}</h2>
-      <p class="section-lead">${esc(t.install.lead(data.php))}</p>
+      <div class="section-head">
+        <p class="kicker">${esc(t.install.kicker)}</p>
+        <h2 id="install-title" class="section-title">${esc(t.install.title)}</h2>
+        <p class="section-lead">${esc(t.install.lead(data.php))}</p>
+      </div>
       <ol class="steps">${steps}
       </ol>
       <p class="install-help">${esc(t.install.help)}</p>
@@ -284,7 +292,7 @@ ${head.join('\n')}
 </main>
 
 <footer class="site-footer">
-  <div class="container footer-inner">
+  <div class="container">
     <div class="footer-notes">
       <p>${esc(data.author)} · ${esc(t.footer.line)}</p>
       <p>${esc(t.footer.trademark)}</p>
@@ -293,6 +301,7 @@ ${head.join('\n')}
       <a href="https://github.com/${esc(data.owner)}">GitHub</a>
       <a href="https://github.com/${esc(data.owner)}/${esc(data.siteRepo)}">${esc(t.footer.source)}</a>
       <a href="https://forum.espocrm.com/">${esc(t.footer.forum)}</a>
+      <a href="${t.footer.legalHref}">${esc(t.footer.legal)}</a>
       <a href="${t.switchTo.href}" hreflang="${t.switchTo.lang}" lang="${t.switchTo.lang}">${esc(t.switchTo.label)}</a>
     </nav>
   </div>
