@@ -267,6 +267,20 @@ ${head.join('\n')}
     </ul>
   </section>
 
+  <section class="container section custom" aria-labelledby="custom-title">
+    <div class="custom-card">
+      <div class="section-intro">
+        <p class="kicker">${esc(t.custom.kicker)}</p>
+        <h2 id="custom-title" class="section-title">${esc(t.custom.title)}</h2>
+        <p class="section-lead">${esc(t.custom.lead)}</p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-accent" href="https://cal.com/alexissantin/15min">${esc(t.custom.book)}</a>
+        <a class="btn btn-outline" href="${t.nav.workHref}">${esc(t.custom.work)}</a>
+      </div>
+    </div>
+  </section>
+
   <section id="releases" class="container section" aria-labelledby="releases-title">
     <div class="section-head">
       <p class="kicker">${esc(t.releases.kicker)}</p>
@@ -311,6 +325,16 @@ ${head.join('\n')}
 `;
 }
 
+// French typography: a no-break space before : ; ? ! and inside « », so that
+// these signs never start a line. The page has no inline script or style.
+function frenchSpaces(html) {
+  return html
+    .replace(/[ \u00a0\u202f]([;?!])/g, '\u202f$1')
+    .replace(/[ \u00a0]:(?=[ \n<])/g, '\u00a0:')
+    .replaceAll('« ', '«\u00a0')
+    .replaceAll(' »', '\u00a0»');
+}
+
 const extensions = [];
 for (const extension of data.extensions) {
   const latest = await loadLatest(extension);
@@ -335,7 +359,7 @@ await rm(dist, { recursive: true, force: true });
 await mkdir(path.join(dist, 'fr'), { recursive: true });
 await cp(assetsDir, path.join(dist, 'assets'), { recursive: true });
 await writeFile(path.join(dist, 'index.html'), renderPage('en', extensions, assetVersion));
-await writeFile(path.join(dist, 'fr/index.html'), renderPage('fr', extensions, assetVersion));
+await writeFile(path.join(dist, 'fr/index.html'), frenchSpaces(renderPage('fr', extensions, assetVersion)));
 
 if (siteUrl) {
   const lastmod = extensions.map((e) => e.latest.date).sort().pop().slice(0, 10);

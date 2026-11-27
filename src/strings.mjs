@@ -48,6 +48,13 @@ export const strings = {
       license: (spdx) => `${spdx} license`,
       allLicensed: (spdx) => `They are free software, under the ${spdx} license like EspoCRM itself.`,
     },
+    custom: {
+      kicker: 'Custom work',
+      title: 'Need a custom extension or a tailored EspoCRM?',
+      lead: 'I build these extensions, and I adapt EspoCRM to teams: custom extensions, data imports, dashboards, an AI assistant. Tell me what you need in a 15-minute call.',
+      book: 'Book a 15-minute call',
+      work: 'See my work',
+    },
     releases: {
       kicker: 'Releases',
       title: 'Recent releases',
@@ -122,6 +129,13 @@ export const strings = {
       pause: 'Mettre l’animation en pause',
       license: (spdx) => `Licence ${spdx}`,
       allLicensed: (spdx) => `Ce sont des logiciels libres, sous licence ${spdx} comme EspoCRM.`,
+    },
+    custom: {
+      kicker: 'Sur mesure',
+      title: 'Besoin d’une extension ou d’un EspoCRM sur mesure ?',
+      lead: 'Je développe ces extensions, et j’adapte EspoCRM aux équipes : extensions sur mesure, imports de données, tableaux de bord, assistant IA. Expliquez-moi votre besoin en 15 minutes.',
+      book: 'Réserver 15 minutes',
+      work: 'Voir mes réalisations',
     },
     releases: {
       kicker: 'Versions',
